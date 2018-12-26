@@ -22,35 +22,33 @@ class CounterController extends Controller
         'color'      => $request->color,
         'start_date' => $request->start_date,
         'status'     => $request->status,
-        'user_id'    => Auth::id()
+        'user_id'    => 1
       ]);
       
       if( !$counter->save() ){
         return response('No se pudo crear el nuevo contador', 500)->header('Content-Type', 'text/plain');
       }
       
-      return response('¡Contador creado exitosamente!', 200)->header('Content-Type', 'text/plain');
+      return response(new CounterResource($counter), 200)->header('Content-Type', 'application/json');
     }
 
     public function show(Counter $counter)
     {
-      return new CounterResource($counter);
+      return response(new CounterResource($counter), 200)->header('Content-Type', 'application/json');
     }
 
     public function update(Request $request, Counter $counter)
-    {
-      $counter = $counter->update([
-        'title' => ( $request->title ) ? $request->title : $counter->title,
-        'start_date' => ( $request->start_date ) ? $request->start_date : $counter->start_date,
-        'color' => ( $request->color ) ? $request->color : $counter->color,
-        'status' => ( $request->status ) ? $request->status : $counter->status
-      ]);
+    {      
+      $counter->title      = ($request->title) ? $request->title : $counter->title;
+      $counter->start_date = ($request->start_date) ? $request->start_date : $counter->start_date;
+      $counter->color      = ($request->color) ? $request->color : $counter->color;
+      $counter->status     = ($request->status) ? $request->status : $counter->status;
       
       if( !$counter ){
         return response('No se pudo actualizar el contador', 500)->header('Content-Type', 'text/plain');
       }
       
-      return response('¡Contador actualizado exitosamente!', 200)->header('Content-Type', 'text/plain');
+      return response(new CounterResource($counter), 200)->header('Content-Type', 'application/json');
     }
 
     public function destroy(Counter $counter)
